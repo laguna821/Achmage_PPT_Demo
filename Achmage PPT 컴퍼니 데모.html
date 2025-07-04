@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AI 검색 시대 언론의 생존법 - AIEO 전략</title>
+    <style>
+        /* H-QUEST 디자인 시스템 변수 */
+        :root {
+            /* Brand primaries */
+            --c-h1: #023373;      /* deep navy for H1 */
+            --c-hx: #0477BF;      /* headings H2-H6 */
+            --c-body: #111111;    /* near-black body copy */
+            --c-gray: #505050;    /* captions, small text */
+            --c-accent: #04BFAD;  /* charts, inline highlights, UI */
+            
+            /* Background colors */
+            --bg-main: #f8f9fa;   /* light gray background */
+            --bg-white: #ffffff;  /* card background */
+            --text-inverse: #ffffff;
+            
+            --gradient-primary: linear-gradient(135deg, var(--c-h1), var(--c-accent));
+            --gradient-highlight: linear-gradient(135deg, var(--c-accent), var(--c-hx));
+            
+            --spacing-unit: 8px;
+            --card-padding: 16px;
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+            --border-radius-lg: 20px;
+            --border-radius-xl: 24px;
+            
+            /* Font weights - Pretendard Variable */
+            --fw-light: 300;
+            --fw-regular: 400;
+            --fw-medium: 500;
+            --fw-semibold: 600;
+            --fw-bold: 700;
+            --fw-extrabold: 800;
+            
+            /* Major Second Typography Scale (1.125) */
+            --font-size-h1: 5.58rem;  /* 89.2px */
+            --font-size-h2: 4.96rem;  /* 79.29px */
+            --font-size-h3: 4.41rem;  /* 70.48px */
+            --font-size-h4: 3.92rem;  /* 62.65px */
+            --font-size-h5: 3.48rem;  /* 55.69px */
+            --font-size-h6: 3.09rem;  /* 49.5px */
+            --font-size-base: 2.75rem; /* 44px */
+            --font-size-sm: 2.44rem;   /* 39.11px */
+            --font-size-xs: 2.17rem;   /* 34.77px */
+            
+            /* Apple morphism shadows */
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 기본 스타일 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg-main);
+            color: var(--c-body);
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            font-variation-settings: 'wght' var(--fw-regular);
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        /* 프레젠테이션 컨테이너 */
+        .presentation-container {
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 진행 표시기 */
+        .progress-indicator {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 1002;
+            flex-shrink: 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* 슬라이드 컨테이너 */
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 슬라이드 기본 스타일 */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: var(--card-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: var(--bg-main);
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        /* 슬라이드 내부 레이아웃 */
+        .slide-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            padding: 0;
+            position: relative;
+        }
+
+        /* 타이포그래피 */
+        h1, .heading-1 {
+            font-size: clamp(3rem, 8vw, var(--font-size-h1));
+            font-variation-settings: 'wght' var(--fw-extrabold);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--c-h1);
+            text-align: center;
+        }
+
+        h2, .heading-2 {
+            font-size: clamp(2.5rem, 7vw, var(--font-size-h2));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+            color: var(--c-hx);
+            text-align: center;
+        }
+
+        h3, .heading-3 {
+            font-size: clamp(2rem, 6vw, var(--font-size-h3));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            color: var(--c-hx);
+            text-align: center;
+        }
+
+        h4, .heading-4 {
+            font-size: clamp(1.75rem, 5vw, var(--font-size-h4));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            line-height: 1.3;
+            margin-bottom: 0.875rem;
+            color: var(--c-hx);
+            text-align: center;
+        }
+
+        h5, .heading-5 {
+            font-size: clamp(1.5rem, 4vw, var(--font-size-h5));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            line-height: 1.3;
+            margin-bottom: 0.75rem;
+            color: var(--c-hx);
+            text-align: center;
+        }
+
+        p, .body-1 {
+            font-size: clamp(1.5rem, 4vw, var(--font-size-base));
+            font-variation-settings: 'wght' var(--fw-regular);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+            color: var(--c-body);
+        }
+
+        .small-text {
+            font-size: clamp(1.25rem, 3vw, var(--font-size-sm));
+            font-variation-settings: 'wght' var(--fw-light);
+            color: var(--c-gray);
+        }
+
+        /* 네비게이션 컨테이너 */
+        .navigation-container {
+            position: relative;
+            height: 80px;
+            flex-shrink: 0;
+            background: transparent;
+            z-index: 1001;
+        }
+
+        /* 네비게이션 */
+        .navigation-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1001;
+        }
+
+        .nav-btn {
+            background: var(--c-h1);
+            color: var(--text-inverse);
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-variation-settings: 'wght' var(--fw-regular);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-card);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--c-hx);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .nav-btn:disabled {
+            background: var(--c-gray);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* 슬라이드 카운터 */
+        .slide-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--c-gray);
+            font-variation-settings: 'wght' var(--fw-light);
+            z-index: 1001;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* 슬라이드 도트 */
+        .slide-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .slide-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--c-gray);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+
+        .slide-dot:hover {
+            background: var(--c-hx);
+            transform: scale(1.2);
+        }
+
+        .slide-dot.active {
+            background: var(--c-accent);
+            width: 24px;
+            border-radius: 5px;
+        }
+
+        /* 레이아웃별 스타일 */
+        .row {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            margin-bottom: var(--card-padding);
+            gap: var(--card-padding);
+        }
+
+        .row:last-child {
+            margin-bottom: 0;
+        }
+
+        .row:only-child {
+            margin-bottom: 0;
+        }
+
+        /* Full-width 콘텐츠 */
+        .full-width-content {
+            background: var(--bg-white);
+            padding: 4rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-card);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .full-width-content:hover {
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* 2열 레이아웃 */
+        .columns-2 .columns-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--card-padding);
+            width: 100%;
+            height: 100%;
+        }
+
+        .column-2 {
+            background: var(--bg-white);
+            padding: 3rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .column-2:hover {
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* 3열 레이아웃 */
+        .columns-3 .columns-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--card-padding);
+            width: 100%;
+            height: 100%;
+        }
+
+        .column-3 {
+            background: var(--bg-white);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-card);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .column-3:hover {
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* 4열 레이아웃 */
+        .columns-4 .columns-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--card-padding);
+            width: 100%;
+            height: 100%;
+        }
+
+        .column-4 {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-card);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .column-4:hover {
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-1px);
+        }
+
+        /* 컬럼 내부 요소 */
+        .column-icon {
+            font-size: var(--font-size-h4);
+            margin-bottom: 1rem;
+            color: var(--c-accent);
+        }
+
+        /* 컬럼별 제목 크기 차별화 */
+        .column-2 .column-title {
+            font-size: var(--font-size-h4);
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .column-3 .column-title {
+            font-size: var(--font-size-h5);
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 0.875rem;
+            line-height: 1.2;
+        }
+
+        .column-4 .column-title {
+            font-size: var(--font-size-h6);
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        /* 컬럼별 본문 크기 차별화 */
+        .column-2 .column-body {
+            font-size: var(--font-size-sm);
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.5;
+        }
+
+        .column-3 .column-body {
+            font-size: var(--font-size-xs);
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.5;
+        }
+
+        .column-4 .column-body {
+            font-size: calc(var(--font-size-xs) * 0.9);
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.4;
+        }
+
+        /* 전체 너비 타이틀 요소들 */
+        .full-width-icon {
+            font-size: var(--font-size-h3);
+            margin-bottom: 1rem;
+            color: var(--c-accent);
+        }
+
+        .full-width-title {
+            font-size: clamp(3rem, 8vw, var(--font-size-h1));
+            font-variation-settings: 'wght' var(--fw-extrabold);
+            color: var(--c-h1);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .full-width-subtitle {
+            font-size: clamp(2rem, 5vw, var(--font-size-h4));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        .full-width-body {
+            font-size: clamp(1.5rem, 4vw, var(--font-size-base));
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.6;
+            max-width: none;
+            margin: 0 auto;
+        }
+
+        .full-width-footer {
+            font-size: var(--font-size-sm);
+            font-variation-settings: 'wght' var(--fw-light);
+            color: var(--c-gray);
+            margin-top: 2rem;
+        }
+
+        /* 2행 레이아웃 특별 처리 */
+        .layout-1-1 .row {
+            flex: 1;
+        }
+
+        .layout-1-2 .row-1,
+        .layout-1-3 .row-1,
+        .layout_1-4 .row-1 {
+            flex: 0 0 auto;
+        }
+
+        .layout-1-2 .row-2,
+        .layout-1-3 .row-2,
+        .layout-1-4 .row-2 {
+            flex: 1;
+        }
+
+        /* 특수 스타일 */
+        .text-accent {
+            color: var(--c-accent);
+            font-variation-settings: 'wght' var(--fw-semibold);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, var(--c-accent) 0%, transparent 40%);
+            padding: 0.1em 0.3em;
+            font-variation-settings: 'wght' var(--fw-semibold);
+        }
+
+        .big-number {
+            font-size: var(--font-size-h2);
+            font-variation-settings: 'wght' var(--fw-extrabold);
+            color: var(--c-accent);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 768px) {
+            :root {
+                --font-size-h1: 4rem;
+                --font-size-h2: 3.5rem;
+                --font-size-h3: 3rem;
+                --font-size-h4: 2.5rem;
+                --font-size-h5: 2.25rem;
+                --font-size-h6: 2rem;
+                --font-size-base: 1.75rem;
+                --font-size-sm: 1.5rem;
+                --font-size-xs: 1.25rem;
+                --card-padding: 12px;
+                --mobile-safe-top: env(safe-area-inset-top, 20px);
+                --mobile-safe-bottom: env(safe-area-inset-bottom, 20px);
+            }
+            
+            .slide {
+                padding: 0;
+                justify-content: flex-start;
+            }
+            
+            .columns-2 .row,
+            .columns-3 .row,
+            .columns-4 .row {
+                flex: 0 0 auto !important;
+                height: auto !important;
+            }
+            
+            .slide-inner {
+                min-height: 100%;
+                padding: calc(20px + env(safe-area-inset-top, 0px)) var(--card-padding) 40px var(--card-padding);
+                justify-content: flex-start !important;
+                align-items: stretch !important;
+            }
+            
+            .row.columns-2 > .columns-wrapper,
+            .row.columns-3 > .columns-wrapper,
+            .row.columns-4 > .columns-wrapper {
+                grid-template-columns: 1fr;
+                gap: var(--card-padding);
+                height: auto !important;
+            }
+            
+            .row {
+                margin-bottom: var(--card-padding);
+                flex: 0 0 auto;
+                flex-direction: column;
+                gap: var(--card-padding);
+                height: auto !important;
+            }
+            
+            .full-width-content {
+                padding: 2rem;
+                height: auto !important;
+                min-height: auto;
+                margin: 20px 0;
+            }
+            
+            .column-2,
+            .column-3,
+            .column-4 {
+                padding: 2rem;
+                height: auto !important;
+                min-height: auto;
+                margin: 10px 0;
+                justify-content: flex-start !important;
+                align-items: flex-start !important;
+                text-align: left;
+            }
+            
+            .column-2 .column-title,
+            .column-3 .column-title,
+            .column-4 .column-title {
+                font-size: var(--font-size-h5);
+            }
+            
+            .column-2 .column-body,
+            .column-3 .column-body,
+            .column-4 .column-body {
+                font-size: var(--font-size-sm);
+            }
+            
+            .navigation-container {
+                position: relative;
+                height: 100px;
+                flex-shrink: 0;
+                background: transparent;
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            
+            .navigation-panel {
+                position: absolute;
+                bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.98);
+                padding: 10px 20px;
+                border-radius: 30px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                z-index: 1001;
+            }
+            
+            .slide-counter {
+                position: absolute;
+                bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+                left: 20px;
+                z-index: 1001;
+            }
+            
+            .layout-1-2 .row-1,
+            .layout-1-3 .row-1,
+            .layout-1-4 .row-1 {
+                height: auto !important;
+                margin-bottom: 20px;
+            }
+            
+            .layout-1-2 .row-2,
+            .layout-1-3 .row-2,
+            .layout-1-4 .row-2 {
+                height: auto !important;
+            }
+            
+            .slide-inner > :first-child {
+                margin-top: 0;
+            }
+            
+            .slide-inner > :last-child {
+                margin-bottom: 40px;
+            }
+        }
+
+        /* 애니메이션 효과 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active .column-2,
+        .slide.active .column-3,
+        .slide.active .column-4,
+        .slide.active .full-width-content {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .slide.active .column-2:nth-child(2),
+        .slide.active .column-3:nth-child(2),
+        .slide.active .column-4:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .slide.active .column-3:nth-child(3),
+        .slide.active .column-4:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .slide.active .column-4:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        /* 스와이프 인디케이터 */
+        .swipe-indicator {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 999;
+            display: none;
+        }
+
+        /* 전체 화면 배경색 통일 */
+        .layout-1-1 .slide-inner,
+        .layout-1-2 .slide-inner,
+        .layout-1-3 .slide-inner,
+        .layout-1-4 .slide-inner,
+        .layout-2-2 .slide-inner,
+        .layout-3-3 .slide-inner {
+            background: var(--bg-white);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- 진행 표시기 -->
+        <div class="progress-indicator">
+            <div class="progress-bar" id="progressFill"></div>
+        </div>
+
+        <!-- 슬라이드 컨테이너 -->
+        <div class="slides-container" id="slidesContainer">
+            <!-- 슬라이드가 여기에 동적으로 추가됩니다 -->
+        </div>
+
+        <!-- 네비게이션 컨테이너 -->
+        <div class="navigation-container">
+            <!-- 네비게이션 -->
+            <div class="navigation-panel">
+                <button class="nav-btn" id="prevBtn" onclick="previousSlide()" disabled>◀</button>
+                <div class="slide-dots" id="slideDots"></div>
+                <button class="nav-btn" id="nextBtn" onclick="nextSlide()">▶</button>
+            </div>
+
+            <!-- 슬라이드 카운터 -->
+            <div class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
+            </div>
+        </div>
+
+        <!-- 모바일 스와이프 인디케이터 -->
+        <div class="swipe-indicator" id="swipeHint">
+            좌우로 스와이프하여 이동
+        </div>
+    </div>
+
+    <script>
+        // presentation-data.js - 필요한 템플릿만 포함
+        const presentationDataJS = {
+            templates: {
+                one_row_layouts: {
+                    layout_11: {
+                        name: "1 Column Full Width",
+                        code: "11",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{
+                                    type: "full-width",
+                                    title: "[제목]",
+                                    subtitle: "[부제목]",
+                                    body: "[본문 내용]",
+                                    footer: "[하단 정보]"
+                                }]
+                            }
+                        }
+                    },
+                    layout_22: {
+                        name: "2 Columns Side by Side",
+                        code: "22",
+                        structure: {
+                            row1: {
+                                columns: 2,
+                                content: [
+                                    {type: "column", title: "[좌측 제목]", body: "[좌측 내용]"},
+                                    {type: "column", title: "[우측 제목]", body: "[우측 내용]"}
+                                ]
+                            }
+                        }
+                    },
+                    layout_33: {
+                        name: "3 Columns Side by Side",
+                        code: "33",
+                        structure: {
+                            row1: {
+                                columns: 3,
+                                content: [
+                                    {type: "column", title: "[컬럼1]", body: "[내용1]"},
+                                    {type: "column", title: "[컬럼2]", body: "[내용2]"},
+                                    {type: "column", title: "[컬럼3]", body: "[내용3]"}
+                                ]
+                            }
+                        }
+                    }
+                },
+                two_row_layouts: {
+                    layout_1_2: {
+                        name: "Full Width + 2 Columns",
+                        code: "1+2",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{type: "full-width", title: "[메인 제목]", subtitle: "[부제목]"}]
+                            },
+                            row2: {
+                                columns: 2,
+                                content: [
+                                    {type: "column", title: "[좌측]", body: "[내용]"},
+                                    {type: "column", title: "[우측]", body: "[내용]"}
+                                ]
+                            }
+                        }
+                    },
+                    layout_1_3: {
+                        name: "Full Width + 3 Columns",
+                        code: "1+3",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{type: "full-width", title: "[메인 제목]", subtitle: "[설명]"}]
+                            },
+                            row2: {
+                                columns: 3,
+                                content: [
+                                    {type: "column", title: "[항목1]", body: "[내용1]"},
+                                    {type: "column", title: "[항목2]", body: "[내용2]"},
+                                    {type: "column", title: "[항목3]", body: "[내용3]"}
+                                ]
+                            }
+                        }
+                    },
+                    layout_1_4: {
+                        name: "Full Width + 4 Columns",
+                        code: "1+4",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{type: "full-width", title: "[메인 제목]", subtitle: "[설명]"}]
+                            },
+                            row2: {
+                                columns: 4,
+                                content: [
+                                    {type: "column", title: "[항목1]", body: "[내용1]"},
+                                    {type: "column", title: "[항목2]", body: "[내용2]"},
+                                    {type: "column", title: "[항목3]", body: "[내용3]"},
+                                    {type: "column", title: "[항목4]", body: "[내용4]"}
+                                ]
+                            }
+                        }
+                    },
+                    layout_2_2: {
+                        name: "2 Columns + 2 Columns",
+                        code: "2+2",
+                        structure: {
+                            row1: {
+                                columns: 2,
+                                content: [
+                                    {type: "column", title: "[상단좌]", body: "[내용]"},
+                                    {type: "column", title: "[상단우]", body: "[내용]"}
+                                ]
+                            },
+                            row2: {
+                                columns: 2,
+                                content: [
+                                    {type: "column", title: "[하단좌]", body: "[내용]"},
+                                    {type: "column", title: "[하단우]", body: "[내용]"}
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            brand_guidelines: {
+                H_QUEST_colors: {
+                    h1: "#023373",
+                    hx: "#0477BF",
+                    body: "#111111",
+                    gray: "#505050",
+                    accent: "#04BFAD"
+                },
+                typography: {
+                    font_family: "Pretendard Variable",
+                    weights: {light: 300, regular: 400, medium: 500, semibold: 600, bold: 700, extrabold: 800},
+                    major_second_scale: {
+                        h1: "5.58rem", h2: "4.96rem", h3: "4.41rem", h4: "3.92rem",
+                        h5: "3.48rem", h6: "3.09rem", base: "2.75rem", sm: "2.44rem", xs: "2.17rem"
+                    }
+                }
+            }
+        };
+
+        // template-renderer.js
+        class TemplateRenderer {
+            constructor(templateData) {
+                this.templates = templateData.templates;
+                this.brandGuidelines = templateData.brand_guidelines;
+            }
+
+            findTemplate(layoutCode) {
+                for (const key in this.templates.one_row_layouts) {
+                    if (this.templates.one_row_layouts[key].code === layoutCode) {
+                        return this.templates.one_row_layouts[key];
+                    }
+                }
+                for (const key in this.templates.two_row_layouts) {
+                    if (this.templates.two_row_layouts[key].code === layoutCode) {
+                        return this.templates.two_row_layouts[key];
+                    }
+                }
+                return null;
+            }
+
+            renderColumn(columnData, columnsCount) {
+                const columnClass = `column-${columnsCount}`;
+                let content = `<div class="${columnClass}">`;
+                
+                if (columnData.icon) {
+                    content += `<div class="column-icon">${columnData.icon}</div>`;
+                }
+                
+                if (columnData.title) {
+                    content += `<h3 class="column-title">${columnData.title}</h3>`;
+                }
+                
+                if (columnData.body) {
+                    content += `<p class="column-body">${columnData.body}</p>`;
+                }
+                
+                if (columnData.list) {
+                    content += '<ul class="column-list">';
+                    columnData.list.forEach(item => {
+                        content += `<li>${item}</li>`;
+                    });
+                    content += '</ul>';
+                }
+                
+                if (columnData.footer) {
+                    content += `<div class="column-footer">${columnData.footer}</div>`;
+                }
+                
+                content += `</div>`;
+                return content;
+            }
+
+            renderFullWidth(contentData) {
+                let content = '<div class="full-width-content">';
+                
+                if (contentData.icon) {
+                    content += `<div class="full-width-icon">${contentData.icon}</div>`;
+                }
+                
+                if (contentData.title) {
+                    content += `<h2 class="full-width-title">${contentData.title}</h2>`;
+                }
+                
+                if (contentData.subtitle) {
+                    content += `<p class="full-width-subtitle">${contentData.subtitle}</p>`;
+                }
+                
+                if (contentData.body) {
+                    content += `<div class="full-width-body">${contentData.body}</div>`;
+                }
+                
+                if (contentData.list) {
+                    content += '<ul class="full-width-list">';
+                    contentData.list.forEach(item => {
+                        content += `<li>${item}</li>`;
+                    });
+                    content += '</ul>';
+                }
+                
+                if (contentData.button) {
+                    content += `<button class="full-width-button">${contentData.button}</button>`;
+                }
+                
+                if (contentData.footer) {
+                    content += `<div class="full-width-footer">${contentData.footer}</div>`;
+                }
+                
+                content += '</div>';
+                return content;
+            }
+
+            renderRow(rowData, rowIndex) {
+                const rowClass = `row row-${rowIndex} columns-${rowData.columns}`;
+                let content = `<div class="${rowClass}">`;
+                
+                if (rowData.columns === 1) {
+                    content += this.renderFullWidth(rowData.content[0]);
+                } else {
+                    content += '<div class="columns-wrapper">';
+                    rowData.content.forEach((col, idx) => {
+                        const animatedCol = { ...col, _index: idx };
+                        content += this.renderColumn(animatedCol, rowData.columns);
+                    });
+                    content += '</div>';
+                }
+                
+                content += '</div>';
+                return content;
+            }
+
+            renderSlide(layoutCode, contentData) {
+                const template = this.findTemplate(layoutCode);
+                if (!template) {
+                    return '';
+                }
+
+                let slideContent = `<div class="slide layout-${layoutCode.replace('+', '-')}">`;
+                slideContent += '<div class="slide-inner">';
+
+                if (template.structure.row1) {
+                    const row1Data = this.mergeContentWithTemplate(
+                        template.structure.row1,
+                        contentData.row1 || contentData
+                    );
+                    slideContent += this.renderRow(row1Data, 1);
+                }
+
+                if (template.structure.row2) {
+                    const row2Data = this.mergeContentWithTemplate(
+                        template.structure.row2,
+                        contentData.row2
+                    );
+                    slideContent += this.renderRow(row2Data, 2);
+                }
+
+                slideContent += '</div>';
+                slideContent += '</div>';
+
+                return slideContent;
+            }
+
+            mergeContentWithTemplate(templateRow, contentData) {
+                if (!contentData) return templateRow;
+
+                const merged = {
+                    columns: templateRow.columns,
+                    content: []
+                };
+
+                if (templateRow.columns === 1) {
+                    merged.content.push({
+                        type: 'full-width',
+                        icon: contentData.icon || templateRow.content[0].icon,
+                        title: contentData.title || templateRow.content[0].title,
+                        subtitle: contentData.subtitle || templateRow.content[0].subtitle,
+                        body: contentData.body || templateRow.content[0].body,
+                        list: contentData.list || templateRow.content[0].list,
+                        button: contentData.button || templateRow.content[0].button,
+                        footer: contentData.footer || templateRow.content[0].footer
+                    });
+                } else {
+                    const contentArray = Array.isArray(contentData) ? contentData : contentData.content || [];
+                    
+                    for (let i = 0; i < templateRow.columns; i++) {
+                        const templateCol = templateRow.content[i] || {};
+                        const contentCol = contentArray[i] || {};
+                        
+                        merged.content.push({
+                            type: 'column',
+                            icon: contentCol.icon || templateCol.icon,
+                            title: contentCol.title || templateCol.title,
+                            body: contentCol.body || templateCol.body,
+                            list: contentCol.list || templateCol.list,
+                            footer: contentCol.footer || templateCol.footer
+                        });
+                    }
+                }
+
+                return merged;
+            }
+        }
+
+        window.TemplateRenderer = TemplateRenderer;
+
+        // app.js
+        let currentSlideIndex = 0;
+        let totalSlides = 0;
+        let slides = [];
+        let isTransitioning = false;
+        let templateRenderer;
+        let presentationData;
+
+        async function loadPresentationData() {
+            try {
+                if (typeof presentationDataJS !== 'undefined') {
+                    presentationData = presentationDataJS;
+                    console.log('JavaScript 변수에서 데이터 로드');
+                } else {
+                    const response = await fetch('presentation-data.json');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    presentationData = await response.json();
+                }
+                
+                templateRenderer = new TemplateRenderer(presentationData);
+                
+                window.templateRenderer = templateRenderer;
+                window.addSlideWithTemplate = addSlideWithTemplate;
+                
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function initializeSlides() {
+            const slidesContainer = document.getElementById('slidesContainer') || document.querySelector('.slides-container');
+            if (!slidesContainer) {
+                return;
+            }
+            
+            slides = slidesContainer.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            
+            if (totalSlides > 0) {
+                slides[0].classList.add('active');
+                updateSlideCounter();
+                updateProgressBar();
+                updateNavigationButtons();
+                createSlideDots();
+                
+                if (window.innerWidth <= 768) {
+                    ensureScrollable(slides[0]);
+                }
+                
+                setTimeout(() => {
+                    triggerSlideAnimations(slides[0]);
+                }, 100);
+            }
+            
+            const totalSlidesElement = document.getElementById('totalSlides');
+            if (totalSlidesElement) {
+                totalSlidesElement.textContent = totalSlides;
+            }
+            
+            updateSlideCounterDisplay();
+            
+            if (window.innerWidth <= 768) {
+                showSwipeHint();
+            }
+            
+            optimizeForScreenSize();
+        }
+
+        function ensureScrollable(slide) {
+            const slideInner = slide.querySelector('.slide-inner');
+            if (slideInner) {
+                slideInner.style.minHeight = '100%';
+            }
+        }
+
+        function changeSlide(direction) {
+            if (totalSlides === 0 || isTransitioning) return;
+            
+            const newIndex = currentSlideIndex + direction;
+            
+            if (newIndex < 0 || newIndex >= totalSlides) {
+                bounceEffect(direction);
+                return;
+            }
+            
+            isTransitioning = true;
+            
+            slides[currentSlideIndex].classList.remove('active');
+            if (direction > 0) {
+                slides[currentSlideIndex].classList.add('prev');
+            }
+            
+            currentSlideIndex = newIndex;
+            
+            setTimeout(() => {
+                slides.forEach(slide => slide.classList.remove('prev'));
+                slides[currentSlideIndex].classList.add('active');
+                updateSlideCounter();
+                updateProgressBar();
+                updateNavigationButtons();
+                isTransitioning = false;
+                
+                if (window.innerWidth <= 768) {
+                    ensureScrollable(slides[currentSlideIndex]);
+                }
+                
+                triggerSlideAnimations(slides[currentSlideIndex]);
+            }, 50);
+        }
+
+        function triggerSlideAnimations(slide) {
+            const animatedElements = slide.querySelectorAll('.column-2, .column-3, .column-4, .full-width-content');
+            animatedElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        function bounceEffect(direction) {
+            const currentSlide = slides[currentSlideIndex];
+            currentSlide.style.transform = `translateX(${direction > 0 ? '-5%' : '5%'})`;
+            setTimeout(() => {
+                currentSlide.style.transform = 'translateX(0)';
+            }, 200);
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < totalSlides && index !== currentSlideIndex && !isTransitioning) {
+                const direction = index > currentSlideIndex ? 1 : -1;
+                currentSlideIndex = index - direction;
+                changeSlide(direction);
+            }
+        }
+
+        function previousSlide() {
+            changeSlide(-1);
+        }
+
+        function nextSlide() {
+            changeSlide(1);
+        }
+
+        function createSlideDots() {
+            const dotsContainer = document.getElementById('slideDots');
+            if (!dotsContainer) return;
+            
+            dotsContainer.innerHTML = '';
+            
+            const maxDots = 10;
+            const showAllDots = totalSlides <= maxDots;
+            
+            if (showAllDots) {
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = createDot(i);
+                    dotsContainer.appendChild(dot);
+                }
+            } else {
+                const range = 2;
+                const start = Math.max(0, currentSlideIndex - range);
+                const end = Math.min(totalSlides - 1, currentSlideIndex + range);
+                
+                if (start > 0) {
+                    dotsContainer.appendChild(createDot(0));
+                    if (start > 1) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.className = 'dots-ellipsis';
+                        dotsContainer.appendChild(ellipsis);
+                    }
+                }
+                
+                for (let i = start; i <= end; i++) {
+                    const dot = createDot(i);
+                    dotsContainer.appendChild(dot);
+                }
+                
+                if (end < totalSlides - 1) {
+                    if (end < totalSlides - 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.textContent = '...';
+                        ellipsis.className = 'dots-ellipsis';
+                        dotsContainer.appendChild(ellipsis);
+                    }
+                    dotsContainer.appendChild(createDot(totalSlides - 1));
+                }
+            }
+        }
+
+        function createDot(index) {
+            const dot = document.createElement('button');
+            dot.className = 'slide-dot';
+            dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+            dot.onclick = () => goToSlide(index);
+            
+            if (index === currentSlideIndex) {
+                dot.classList.add('active');
+            }
+            
+            return dot;
+        }
+
+        function updateSlideDots() {
+            if (totalSlides > 10) {
+                createSlideDots();
+            } else {
+                const dots = document.querySelectorAll('.slide-dot');
+                dots.forEach((dot, index) => {
+                    if (index === currentSlideIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        function updateSlideCounter() {
+            const currentSlideElement = document.getElementById('currentSlide');
+            if (currentSlideElement) {
+                currentSlideElement.textContent = currentSlideIndex + 1;
+            }
+            updateSlideCounterDisplay();
+        }
+
+        function updateSlideCounterDisplay() {
+            const counterElement = document.getElementById('slideCounter');
+            if (counterElement) {
+                counterElement.textContent = `${currentSlideIndex + 1}/${totalSlides}`;
+            }
+        }
+
+        function updateProgressBar() {
+            const progressFill = document.getElementById('progressFill') || document.querySelector('.progress-bar');
+            if (progressFill) {
+                const progress = totalSlides > 1 ? (currentSlideIndex / (totalSlides - 1)) * 100 : 100;
+                progressFill.style.width = progress + '%';
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
+            
+            updateSlideDots();
+        }
+
+        function showSwipeHint() {
+            const swipeHint = document.getElementById('swipeHint');
+            if (swipeHint) {
+                swipeHint.style.display = 'block';
+                setTimeout(() => {
+                    swipeHint.style.opacity = '0';
+                    setTimeout(() => {
+                        swipeHint.style.display = 'none';
+                    }, 300);
+                }, 3000);
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function optimizeForScreenSize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            if (width / height > 2) {
+                document.body.classList.add('ultra-wide');
+            } else if (width / height < 0.6) {
+                document.body.classList.add('ultra-tall');
+            }
+            
+            if (width <= 768) {
+                document.body.classList.add('mobile-view');
+            } else {
+                document.body.classList.remove('mobile-view');
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (isTransitioning) return;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    changeSlide(-1);
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                    e.preventDefault();
+                    changeSlide(1);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    goToSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    goToSlide(totalSlides - 1);
+                    break;
+                case 'f':
+                case 'F11':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+            }
+        });
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let touchStartY = 0;
+        let touchEndY = 0;
+        let touchStartTime = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        document.addEventListener('touchend', function(e) {
+            if (isTransitioning) return;
+            
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const timeThreshold = 300;
+            const velocityThreshold = 0.3;
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = Math.abs(touchStartY - touchEndY);
+            const timeDiff = Date.now() - touchStartTime;
+            const velocity = Math.abs(diffX) / timeDiff;
+            
+            if (diffY > Math.abs(diffX)) return;
+            
+            if (Math.abs(diffX) > swipeThreshold && 
+                timeDiff < timeThreshold && 
+                velocity > velocityThreshold) {
+                
+                if (diffX > 0) {
+                    changeSlide(1);
+                } else {
+                    changeSlide(-1);
+                }
+            }
+        }
+
+        function addSlide(content, slideClass = '') {
+            const slidesContainer = document.getElementById('slidesContainer');
+            const slideDiv = document.createElement('div');
+            slideDiv.className = `slide ${slideClass}`;
+            slideDiv.innerHTML = content;
+            slidesContainer.appendChild(slideDiv);
+            
+            initializeSlides();
+        }
+
+        function addSlideWithTemplate(layoutCode, contentData) {
+            if (!templateRenderer) {
+                return;
+            }
+            
+            const slideHTML = templateRenderer.renderSlide(layoutCode, contentData);
+            const slidesContainer = document.getElementById('slidesContainer') || document.querySelector('.slides-container');
+            
+            if (slidesContainer) {
+                slidesContainer.insertAdjacentHTML('beforeend', slideHTML);
+                initializeSlides();
+            }
+        }
+
+        window.addEventListener('resize', function() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            
+            optimizeForScreenSize();
+        });
+
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+        // 슬라이드 생성
+        document.addEventListener('DOMContentLoaded', async function() {
+            const loaded = await loadPresentationData();
+            
+            if (loaded && window.addSlideWithTemplate) {
+                // Slide 1: Opening Impact
+                addSlideWithTemplate('11', {
+                    icon: '📰',
+                    title: 'AI가 기사를 골라 읽는다',
+                    subtitle: 'ChatGPT 시대, 클릭 없는 뉴스 소비',
+                    body: '독자가 아닌 AI가 먼저 읽는 시대<br>링크 클릭? 이제는 옛말<br><span class="text-accent">AI가 인용하는 기사만 살아남는다</span>',
+                    footer: '2025년 7월'
+                });
+                
+                // Slide 2: 국내 현황 (업데이트)
+                addSlideWithTemplate('33', [
+                    {
+                        icon: '📊',
+                        title: '기자 60% 이상',
+                        body: 'AI 도구 사용 중<br>번역·요약·음성변환<br><span class="text-accent">이미 일상화</span>'
+                    },
+                    {
+                        icon: '📺',
+                        title: '방송 콘텐츠 10편 중 1편',
+                        body: 'AI 제작 참여<br>자료조사·자막·편성<br><span class="text-accent">확산 중</span>'
+                    },
+                    {
+                        icon: '🤖',
+                        title: '자체 AI 개발',
+                        body: '조선·한국·영남일보<br>인천투데이 INTO-AI<br><span class="text-accent">경쟁 시작</span>'
+                    }
+                ]);
+                
+                // Slide 3: Problem Diagnosis
+                addSlideWithTemplate('33', [
+                    {
+                        icon: '🎣',
+                        title: 'AI는 어그로를 무시한다',
+                        body: '낚시 제목?<br><span class="text-accent">AI는 속지 않음</span><br>본문만 스캔'
+                    },
+                    {
+                        icon: '⏭️',
+                        title: 'AI는 서론을 건너뛴다',
+                        body: '뜸들이기?<br><span class="text-accent">AI는 건너뜀</span><br>핵심만 추출'
+                    },
+                    {
+                        icon: '✂️',
+                        title: 'AI는 문단만 뽑아간다',
+                        body: '맥락 의존?<br><span class="text-accent">AI는 문단만 뽑음</span><br>독립성 필수'
+                    }
+                ]);
+                
+                // Slide 4: AIEO Concept
+                addSlideWithTemplate('1+2', {
+                    row1: {
+                        title: 'AIEO = AI가 인용하게 만들기',
+                        subtitle: '검색 최적화의 패러다임 전환'
+                    },
+                    row2: [
+                        {
+                            icon: '🔍',
+                            title: '과거: SEO',
+                            body: '검색 상위 노출<br>↓<br>클릭 유도<br>↓<br>페이지뷰'
+                        },
+                        {
+                            icon: '🤖',
+                            title: '현재: AIEO',
+                            body: 'AI가 직접 인용<br>↓<br>출처로 표시<br>↓<br>브랜드 신뢰'
+                        }
+                    ]
+                });
+                
+                // Slide 5: Core Message
+                addSlideWithTemplate('1+3', {
+                    row1: {
+                        title: '문단이 곧 기사다',
+                        subtitle: 'AI는 통째로 읽지 않는다'
+                    },
+                    row2: [
+                        {
+                            icon: '📄',
+                            title: 'Before',
+                            body: '기사 전체 스토리<br>순차적 흐름<br>맥락 중요'
+                        },
+                        {
+                            icon: '📌',
+                            title: 'After',
+                            body: '문단별 독립 정보<br>즉각적 이해<br>자체 완결성'
+                        },
+                        {
+                            icon: '✅',
+                            title: '결과',
+                            body: '잘라서 써도 OK<br>AI가 바로 인용<br>정보 가치 상승'
+                        }
+                    ]
+                });
+                
+                // Slide 6: Real Examples
+                addSlideWithTemplate('2+2', {
+                    row1: [
+                        {
+                            icon: '❌',
+                            title: 'Before: 기존 방식',
+                            body: '<span style="color: var(--c-gray);">"이런 가운데 정부는..."</span><br><span style="color: var(--c-gray);">"그러나 일각에서는..."</span><br><span style="color: var(--c-gray);">"한편 전문가들은..."</span>'
+                        },
+                        {
+                            icon: '✅',
+                            title: 'After: AIEO 방식',
+                            body: '<span class="text-accent">"정부, 금리 3.0% 동결 발표"</span><br><span class="text-accent">"한국은행 금통위 만장일치"</span><br><span class="text-accent">"물가상승률 2.1% 전망"</span>'
+                        }
+                    ],
+                    row2: [
+                        {
+                            icon: '📝',
+                            title: '개선 포인트 1',
+                            body: '첫 줄에 핵심 팩트<br>주어 명확히<br>숫자 포함'
+                        },
+                        {
+                            icon: '🎯',
+                            title: '개선 포인트 2',
+                            body: '지시어 제거<br>구체적 명사 사용<br>독립적 의미'
+                        }
+                    ]
+                });
+                
+                // Slide 7: 4 Principles
+                addSlideWithTemplate('1+4', {
+                    row1: {
+                        title: '내일부터 쓸 수 있는 4원칙',
+                        subtitle: 'AIEO 기사 작성 치트키'
+                    },
+                    row2: [
+                        {
+                            icon: '1️⃣',
+                            title: '첫줄 = 핵심',
+                            body: '가장 중요한 정보<br>바로 제시'
+                        },
+                        {
+                            icon: '2️⃣',
+                            title: '숫자 + 출처',
+                            body: '구체적 데이터<br>신뢰성 확보'
+                        },
+                        {
+                            icon: '3️⃣',
+                            title: '구체적 명사',
+                            body: '이것 → 금리인상<br>그것 → 정부정책'
+                        },
+                        {
+                            icon: '4️⃣',
+                            title: '1문단 = 1답변',
+                            body: '하나의 질문에<br>하나의 답'
+                        }
+                    ]
+                });
+                
+                // Slide 8: Organization Strategy
+                addSlideWithTemplate('22', [
+                    {
+                        icon: '🎯',
+                        title: '단기 전략',
+                        body: '<span class="text-accent">기자 대상 2시간 워크숍</span><br><br>• AIEO 개념 이해<br>• 실습 위주 교육<br>• 즉시 적용 가능한 팁'
+                    },
+                    {
+                        icon: '🚀',
+                        title: '장기 전략',
+                        body: '<span class="text-accent">기사 리뉴얼 TF팀</span><br><br>• 기존 기사 분석<br>• 단계적 개선<br>• 성과 측정 시스템'
+                    }
+                ]);
+                
+                // Slide 9: AIEO 미래 (업데이트)
+                addSlideWithTemplate('33', [
+                    {
+                        icon: '📉',
+                        title: 'AIEO 안 하면 -60%',
+                        body: '구글 SGE 도입 시<br>트래픽 최대 60% 감소<br><span class="text-accent">Ahrefs 2024</span>'
+                    },
+                    {
+                        icon: '🔍',
+                        title: '블루닷 인텔리전스',
+                        body: '국내 첫 AIEO 분석툴<br>인용 빈도·위치 측정<br><span class="text-accent">2025.5 출시</span>'
+                    },
+                    {
+                        icon: '🏗️',
+                        title: 'AI-CMS는 기본',
+                        body: '이제 필수 인프라<br>AIEO가 차별화 포인트<br><span class="text-accent">생존의 열쇠</span>'
+                    }
+                ]);
+                
+                // Slide 10: Call to Action
+                addSlideWithTemplate('11', {
+                    icon: '🚨',
+                    title: '지금이 마지막 기회다',
+                    subtitle: 'AI와 함께 가든지, AI에 묻히든지',
+                    body: '<span class="text-accent">선택 1:</span> AI의 정보원이 되기<br><span class="text-accent">선택 2:</span> 존재감 없는 언론사 되기<br><br><span class="big-number">오늘 점심이 분기점이다</span>',
+                    footer: 'AIEO - AI Engine Optimization'
+                });
+            } else {
+            }
+        });
+    </script>
+</body>
+</html>
