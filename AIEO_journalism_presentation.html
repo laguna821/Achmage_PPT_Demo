@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AI 검색 시대, 언론의 생존 전략</title>
+    <style>
+        /* H-QUEST 디자인 시스템 변수 */
+        :root {
+            /* Brand primaries */
+            --c-h1: #023373;
+            --c-hx: #0477BF;
+            --c-body: #111111;
+            --c-gray: #505050;
+            --c-accent: #04BFAD;
+            
+            /* Background colors */
+            --bg-main: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-inverse: #ffffff;
+            
+            /* Typography - Major Second Scale */
+            --font-size-h1: 5.58rem;
+            --font-size-h2: 4.96rem;
+            --font-size-h3: 4.41rem;
+            --font-size-h4: 3.92rem;
+            --font-size-h5: 3.48rem;
+            --font-size-h6: 3.09rem;
+            --font-size-base: 2.75rem;
+            --font-size-sm: 2.44rem;
+            --font-size-xs: 2.17rem;
+            
+            /* Font weights */
+            --fw-light: 300;
+            --fw-regular: 400;
+            --fw-medium: 500;
+            --fw-semibold: 600;
+            --fw-bold: 700;
+            --fw-extrabold: 800;
+            
+            /* Spacing and borders */
+            --spacing-unit: 8px;
+            --card-padding: 16px;
+            --border-radius: 16px;
+            --border-radius-sm: 12px;
+            --border-radius-lg: 20px;
+            --border-radius-xl: 24px;
+            
+            /* Shadows */
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: var(--bg-main);
+            color: var(--c-body);
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            font-variation-settings: 'wght' var(--fw-regular);
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        /* Presentation container */
+        .presentation-container {
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Progress indicator */
+        .progress-indicator {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            z-index: 1002;
+            flex-shrink: 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, var(--c-h1), var(--c-accent));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Slides container */
+        .slides-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Slide base styles */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: var(--card-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: var(--bg-main);
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        /* Slide inner layout */
+        .slide-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            padding: 0;
+            position: relative;
+        }
+
+        /* Typography */
+        h1, .heading-1 {
+            font-size: clamp(3rem, 8vw, var(--font-size-h1));
+            font-variation-settings: 'wght' var(--fw-extrabold);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--c-h1);
+            text-align: center;
+        }
+
+        h2, .heading-2 {
+            font-size: clamp(2.5rem, 7vw, var(--font-size-h2));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            line-height: 1.2;
+            margin-bottom: 1.25rem;
+            color: var(--c-hx);
+            text-align: center;
+        }
+
+        h3, .heading-3 {
+            font-size: clamp(2rem, 6vw, var(--font-size-h3));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            color: var(--c-hx);
+            text-align: center;
+        }
+
+        p, .body-1 {
+            font-size: clamp(1.5rem, 4vw, var(--font-size-base));
+            font-variation-settings: 'wght' var(--fw-regular);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+            color: var(--c-body);
+        }
+
+        /* Navigation */
+        .navigation-container {
+            position: relative;
+            height: 80px;
+            flex-shrink: 0;
+            background: transparent;
+            z-index: 1001;
+        }
+
+        .navigation-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1001;
+        }
+
+        .nav-btn {
+            background: var(--c-h1);
+            color: var(--text-inverse);
+            border: none;
+            padding: 12px 16px;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-variation-settings: 'wght' var(--fw-regular);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-card);
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--c-hx);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .nav-btn:disabled {
+            background: var(--c-gray);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Slide counter */
+        .slide-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--c-gray);
+            font-variation-settings: 'wght' var(--fw-light);
+            z-index: 1001;
+            box-shadow: var(--shadow-card);
+        }
+
+        /* Row styles */
+        .row {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            align-items: stretch;
+            margin-bottom: var(--card-padding);
+            gap: var(--card-padding);
+        }
+
+        .row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Full-width content */
+        .full-width-content {
+            background: var(--bg-white);
+            padding: 4rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-card);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .full-width-content:hover {
+            box-shadow: var(--shadow-card-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Column layouts */
+        .columns-2 .columns-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--card-padding);
+            width: 100%;
+            height: 100%;
+        }
+
+        .column-2 {
+            background: var(--bg-white);
+            padding: 3rem;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .columns-3 .columns-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: var(--card-padding);
+            width: 100%;
+            height: 100%;
+        }
+
+        .column-3 {
+            background: var(--bg-white);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-card);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .columns-4 .columns-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--card-padding);
+            width: 100%;
+            height: 100%;
+        }
+
+        .column-4 {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-card);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        /* Typography hierarchy for columns */
+        .full-width-icon {
+            font-size: var(--font-size-h3);
+            margin-bottom: 1rem;
+            color: var(--c-accent);
+        }
+
+        .full-width-title {
+            font-size: clamp(3rem, 8vw, var(--font-size-h1));
+            font-variation-settings: 'wght' var(--fw-extrabold);
+            color: var(--c-h1);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .full-width-subtitle {
+            font-size: clamp(2rem, 5vw, var(--font-size-h4));
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        .full-width-body {
+            font-size: clamp(1.5rem, 4vw, var(--font-size-base));
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.6;
+            max-width: none;
+            margin: 0 auto;
+        }
+
+        .full-width-footer {
+            font-size: var(--font-size-sm);
+            font-variation-settings: 'wght' var(--fw-light);
+            color: var(--c-gray);
+            margin-top: 2rem;
+        }
+
+        .column-icon {
+            font-size: var(--font-size-h4);
+            margin-bottom: 1rem;
+            color: var(--c-accent);
+        }
+
+        .column-2 .column-title {
+            font-size: var(--font-size-h4);
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .column-3 .column-title {
+            font-size: var(--font-size-h5);
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 0.875rem;
+            line-height: 1.2;
+        }
+
+        .column-4 .column-title {
+            font-size: var(--font-size-h6);
+            font-variation-settings: 'wght' var(--fw-semibold);
+            color: var(--c-hx);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .column-2 .column-body {
+            font-size: var(--font-size-sm);
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.5;
+        }
+
+        .column-3 .column-body {
+            font-size: var(--font-size-xs);
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.5;
+        }
+
+        .column-4 .column-body {
+            font-size: calc(var(--font-size-xs) * 0.9);
+            font-variation-settings: 'wght' var(--fw-regular);
+            color: var(--c-body);
+            line-height: 1.4;
+        }
+
+        /* Two-row layout special handling */
+        .layout-1-3 .row-1,
+        .layout-1-4 .row-1 {
+            flex: 0 0 auto;
+        }
+
+        .layout-1-3 .row-2,
+        .layout-1-4 .row-2 {
+            flex: 1;
+        }
+
+        /* Special styles */
+        .text-accent {
+            color: var(--c-accent);
+            font-variation-settings: 'wght' var(--fw-regular);
+        }
+
+        strong {
+            font-variation-settings: 'wght' var(--fw-bold);
+            color: var(--c-accent);
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            :root {
+                --font-size-h1: 4rem;
+                --font-size-h2: 3.5rem;
+                --font-size-h3: 3rem;
+                --font-size-h4: 2.5rem;
+                --font-size-h5: 2.25rem;
+                --font-size-h6: 2rem;
+                --font-size-base: 1.75rem;
+                --font-size-sm: 1.5rem;
+                --font-size-xs: 1.25rem;
+                --card-padding: 12px;
+            }
+            
+            .slide {
+                padding: 0;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+                justify-content: flex-start;
+            }
+            
+            .slide-inner {
+                min-height: 100%;
+                padding: calc(20px + env(safe-area-inset-top, 0px)) var(--card-padding) 40px var(--card-padding);
+                width: 100%;
+                box-sizing: border-box;
+                position: relative;
+                justify-content: flex-start !important;
+                align-items: stretch !important;
+            }
+            
+            .row {
+                margin-bottom: var(--card-padding);
+                flex: 0 0 auto;
+                flex-direction: column;
+                gap: var(--card-padding);
+                height: auto !important;
+            }
+            
+            .columns-2 .columns-wrapper,
+            .columns-3 .columns-wrapper,
+            .columns-4 .columns-wrapper {
+                grid-template-columns: 1fr;
+                gap: var(--card-padding);
+                height: auto !important;
+            }
+            
+            .full-width-content {
+                padding: 2rem;
+                height: auto !important;
+                min-height: auto;
+                margin: 20px 0;
+            }
+            
+            .column-2,
+            .column-3,
+            .column-4 {
+                padding: 2rem;
+                height: auto !important;
+                min-height: auto;
+                margin: 10px 0;
+                justify-content: flex-start !important;
+                align-items: flex-start !important;
+                text-align: left;
+            }
+            
+            .navigation-container {
+                position: relative;
+                height: 100px;
+                flex-shrink: 0;
+                background: transparent;
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            
+            .navigation-panel {
+                position: absolute;
+                bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%);
+                background: rgba(255, 255, 255, 0.98);
+                padding: 10px 20px;
+                border-radius: 30px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                z-index: 1001;
+            }
+            
+            .slide-counter {
+                position: absolute;
+                bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+                left: 20px;
+                z-index: 1001;
+            }
+        }
+
+        /* Animation effects */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide.active .column-2,
+        .slide.active .column-3,
+        .slide.active .column-4,
+        .slide.active .full-width-content {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Progress indicator -->
+        <div class="progress-indicator">
+            <div class="progress-bar" id="progressFill"></div>
+        </div>
+
+        <!-- Slides container -->
+        <div class="slides-container" id="slidesContainer">
+            <!-- Slides will be generated here -->
+        </div>
+
+        <!-- Navigation container -->
+        <div class="navigation-container">
+            <div class="navigation-panel">
+                <button class="nav-btn" id="prevBtn" onclick="previousSlide()" disabled>◀</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextSlide()">▶</button>
+            </div>
+            <div class="slide-counter">
+                <span id="currentSlide">1</span> / <span id="totalSlides">8</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Minimal presentation data for used layouts only
+        const presentationDataJS = {
+            templates: {
+                one_row_layouts: {
+                    layout_11: {
+                        name: "1 Column Full Width",
+                        code: "11",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{
+                                    type: "full-width"
+                                }]
+                            }
+                        }
+                    },
+                    layout_22: {
+                        name: "2 Columns Side by Side",
+                        code: "22",
+                        structure: {
+                            row1: {
+                                columns: 2,
+                                content: [
+                                    { type: "column" },
+                                    { type: "column" }
+                                ]
+                            }
+                        }
+                    },
+                    layout_33: {
+                        name: "3 Columns Side by Side",
+                        code: "33",
+                        structure: {
+                            row1: {
+                                columns: 3,
+                                content: [
+                                    { type: "column" },
+                                    { type: "column" },
+                                    { type: "column" }
+                                ]
+                            }
+                        }
+                    }
+                },
+                two_row_layouts: {
+                    layout_1_3: {
+                        name: "Full Width + 3 Columns",
+                        code: "1+3",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{
+                                    type: "full-width"
+                                }]
+                            },
+                            row2: {
+                                columns: 3,
+                                content: [
+                                    { type: "column" },
+                                    { type: "column" },
+                                    { type: "column" }
+                                ]
+                            }
+                        }
+                    },
+                    layout_1_4: {
+                        name: "Full Width + 4 Columns",
+                        code: "1+4",
+                        structure: {
+                            row1: {
+                                columns: 1,
+                                content: [{
+                                    type: "full-width"
+                                }]
+                            },
+                            row2: {
+                                columns: 4,
+                                content: [
+                                    { type: "column" },
+                                    { type: "column" },
+                                    { type: "column" },
+                                    { type: "column" }
+                                ]
+                            }
+                        }
+                    },
+                    layout_2_2: {
+                        name: "2 Columns + 2 Columns",
+                        code: "2+2",
+                        structure: {
+                            row1: {
+                                columns: 2,
+                                content: [
+                                    { type: "column" },
+                                    { type: "column" }
+                                ]
+                            },
+                            row2: {
+                                columns: 2,
+                                content: [
+                                    { type: "column" },
+                                    { type: "column" }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            brand_guidelines: {
+                H_QUEST_colors: {
+                    h1: "#023373",
+                    hx: "#0477BF",
+                    body: "#111111",
+                    gray: "#505050",
+                    accent: "#04BFAD"
+                }
+            }
+        };
+
+        // Template renderer
+        class TemplateRenderer {
+            constructor(templateData) {
+                this.templates = templateData.templates;
+                this.brandGuidelines = templateData.brand_guidelines;
+            }
+
+            findTemplate(layoutCode) {
+                for (const key in this.templates.one_row_layouts) {
+                    if (this.templates.one_row_layouts[key].code === layoutCode) {
+                        return this.templates.one_row_layouts[key];
+                    }
+                }
+                for (const key in this.templates.two_row_layouts) {
+                    if (this.templates.two_row_layouts[key].code === layoutCode) {
+                        return this.templates.two_row_layouts[key];
+                    }
+                }
+                return null;
+            }
+
+            renderColumn(columnData, columnsCount) {
+                const columnClass = `column-${columnsCount}`;
+                let content = `<div class="${columnClass}">`;
+                
+                if (columnData.icon) {
+                    content += `<div class="column-icon">${columnData.icon}</div>`;
+                }
+                if (columnData.title) {
+                    content += `<h3 class="column-title">${columnData.title}</h3>`;
+                }
+                if (columnData.body) {
+                    content += `<p class="column-body">${columnData.body}</p>`;
+                }
+                
+                content += `</div>`;
+                return content;
+            }
+
+            renderFullWidth(contentData) {
+                let content = '<div class="full-width-content">';
+                
+                if (contentData.icon) {
+                    content += `<div class="full-width-icon">${contentData.icon}</div>`;
+                }
+                if (contentData.title) {
+                    content += `<h2 class="full-width-title">${contentData.title}</h2>`;
+                }
+                if (contentData.subtitle) {
+                    content += `<p class="full-width-subtitle">${contentData.subtitle}</p>`;
+                }
+                if (contentData.body) {
+                    content += `<div class="full-width-body">${contentData.body}</div>`;
+                }
+                if (contentData.footer) {
+                    content += `<div class="full-width-footer">${contentData.footer}</div>`;
+                }
+                
+                content += '</div>';
+                return content;
+            }
+
+            renderRow(rowData, rowIndex) {
+                const rowClass = `row row-${rowIndex} columns-${rowData.columns}`;
+                let content = `<div class="${rowClass}">`;
+                
+                if (rowData.columns === 1) {
+                    content += this.renderFullWidth(rowData.content[0]);
+                } else {
+                    content += '<div class="columns-wrapper">';
+                    rowData.content.forEach((col) => {
+                        content += this.renderColumn(col, rowData.columns);
+                    });
+                    content += '</div>';
+                }
+                
+                content += '</div>';
+                return content;
+            }
+
+            renderSlide(layoutCode, contentData) {
+                const template = this.findTemplate(layoutCode);
+                if (!template) {
+                    console.error(`Template not found for layout code: ${layoutCode}`);
+                    return '';
+                }
+
+                let slideContent = `<div class="slide layout-${layoutCode.replace('+', '-')}">`;
+                slideContent += '<div class="slide-inner">';
+
+                if (template.structure.row1) {
+                    const row1Data = this.mergeContentWithTemplate(
+                        template.structure.row1,
+                        contentData.row1 || contentData
+                    );
+                    slideContent += this.renderRow(row1Data, 1);
+                }
+
+                if (template.structure.row2) {
+                    const row2Data = this.mergeContentWithTemplate(
+                        template.structure.row2,
+                        contentData.row2
+                    );
+                    slideContent += this.renderRow(row2Data, 2);
+                }
+
+                slideContent += '</div>';
+                slideContent += '</div>';
+
+                return slideContent;
+            }
+
+            mergeContentWithTemplate(templateRow, contentData) {
+                if (!contentData) return templateRow;
+
+                const merged = {
+                    columns: templateRow.columns,
+                    content: []
+                };
+
+                if (templateRow.columns === 1) {
+                    merged.content.push({
+                        type: 'full-width',
+                        icon: contentData.icon,
+                        title: contentData.title,
+                        subtitle: contentData.subtitle,
+                        body: contentData.body,
+                        footer: contentData.footer
+                    });
+                } else {
+                    const contentArray = Array.isArray(contentData) ? contentData : contentData.content || [];
+                    
+                    for (let i = 0; i < templateRow.columns; i++) {
+                        const contentCol = contentArray[i] || {};
+                        
+                        merged.content.push({
+                            type: 'column',
+                            icon: contentCol.icon,
+                            title: contentCol.title,
+                            body: contentCol.body,
+                            footer: contentCol.footer
+                        });
+                    }
+                }
+
+                return merged;
+            }
+        }
+
+        // Global variables
+        let currentSlideIndex = 0;
+        let totalSlides = 0;
+        let slides = [];
+        let isTransitioning = false;
+        let templateRenderer;
+        let presentationData;
+
+        // Load presentation data
+        async function loadPresentationData() {
+            presentationData = presentationDataJS;
+            templateRenderer = new TemplateRenderer(presentationData);
+            return true;
+        }
+
+        // Initialize slides
+        function initializeSlides() {
+            const slidesContainer = document.getElementById('slidesContainer');
+            if (!slidesContainer) {
+                console.error('Slides container not found');
+                return;
+            }
+            
+            slides = slidesContainer.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            
+            if (totalSlides > 0) {
+                slides[0].classList.add('active');
+                updateSlideCounter();
+                updateProgressBar();
+                updateNavigationButtons();
+            }
+            
+            document.getElementById('totalSlides').textContent = totalSlides;
+        }
+
+        // Change slide
+        function changeSlide(direction) {
+            if (totalSlides === 0 || isTransitioning) return;
+            
+            const newIndex = currentSlideIndex + direction;
+            
+            if (newIndex < 0 || newIndex >= totalSlides) {
+                return;
+            }
+            
+            isTransitioning = true;
+            
+            slides[currentSlideIndex].classList.remove('active');
+            if (direction > 0) {
+                slides[currentSlideIndex].classList.add('prev');
+            }
+            
+            currentSlideIndex = newIndex;
+            
+            setTimeout(() => {
+                slides.forEach(slide => slide.classList.remove('prev'));
+                slides[currentSlideIndex].classList.add('active');
+                updateSlideCounter();
+                updateProgressBar();
+                updateNavigationButtons();
+                isTransitioning = false;
+            }, 50);
+        }
+
+        // Navigation functions
+        function previousSlide() {
+            changeSlide(-1);
+        }
+
+        function nextSlide() {
+            changeSlide(1);
+        }
+
+        // Update functions
+        function updateSlideCounter() {
+            document.getElementById('currentSlide').textContent = currentSlideIndex + 1;
+        }
+
+        function updateProgressBar() {
+            const progressFill = document.getElementById('progressFill');
+            if (progressFill) {
+                const progress = totalSlides > 1 ? (currentSlideIndex / (totalSlides - 1)) * 100 : 100;
+                progressFill.style.width = progress + '%';
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = (currentSlideIndex === 0);
+            nextBtn.disabled = (currentSlideIndex === totalSlides - 1);
+        }
+
+        // Keyboard events
+        document.addEventListener('keydown', function(e) {
+            if (isTransitioning) return;
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    changeSlide(-1);
+                    break;
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case ' ':
+                    e.preventDefault();
+                    changeSlide(1);
+                    break;
+            }
+        });
+
+        // Touch events
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', function(e) {
+            if (isTransitioning) return;
+            
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    changeSlide(1);
+                } else {
+                    changeSlide(-1);
+                }
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadPresentationData();
+            
+            // Generate slides
+            const slidesContainer = document.getElementById('slidesContainer');
+            
+            // Slide 0
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('11', {
+                title: 'ChatGPT가 연합뉴스를 모른다면?',
+                subtitle: 'AI 검색 시대, 언론의 생존 전략',
+                body: '<strong>국내 60%</strong> vs <strong>해외 100%</strong><br>AI 검색 대응률의 충격적 격차<br><br>이제는 <strong>클릭</strong>이 아닌 <strong>인용</strong>이 뉴스의 생명입니다',
+                footer: '2025년 1월 - AIEO 시대의 도전'
+            }));
+            
+            // Slide 1
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('22', [
+                {
+                    title: '전통적 기사 작성',
+                    body: '• "충격" "경악" 제목<br>• 뒤에 숨은 핵심 정보<br>• "~인 것으로 알려졌다"<br>• 긴 호흡의 서사 구조'
+                },
+                {
+                    title: 'AI 시대 기사 작성',
+                    body: '• 질문에 답하는 제목<br>• <strong>첫 줄 = 핵심 정보</strong><br>• 팩트 + 출처 명시<br>• 문단별 완결성'
+                }
+            ]));
+            
+            // Slide 2
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('33', [
+                {
+                    title: '선도 그룹 (3개사)',
+                    body: '아주경제: <strong>기자 70%</strong> 활용<br>한국일보: 국내 최초 AI 준칙<br>조선일보: 작성 어시스턴트'
+                },
+                {
+                    title: '도전 그룹 (3개사)',
+                    body: '서울경제: AI 프리즘 출시<br>연합뉴스: 인포그래픽 자동화<br>카카오: 챗봇 실험 중'
+                },
+                {
+                    title: '갈등 상황',
+                    body: '방송 3사 → 네이버 제소<br>신문협회 → 공정위 신고<br><strong>"쓰면서도 싸운다"</strong>'
+                }
+            ]));
+            
+            // Slide 3
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('1+3', {
+                row1: {
+                    title: 'AI가 인용하는 기사의 비밀',
+                    subtitle: '단 3가지만 기억하세요'
+                },
+                row2: [
+                    {
+                        icon: '🎯',
+                        title: '한 문단 = 한 답변',
+                        body: '이전 문단 없어도 이해 가능<br>"이처럼" "그래서" 금지'
+                    },
+                    {
+                        icon: '📊',
+                        title: '첫 문장에 승부',
+                        body: '누가, 무엇을, 왜<br>숫자와 출처 필수'
+                    },
+                    {
+                        icon: '❓',
+                        title: '독자 질문 먼저',
+                        body: '"어떻게 되나요?"<br>"왜 중요한가요?"<br>→ 바로 답하기'
+                    }
+                ]
+            }));
+            
+            // Slide 4
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('2+2', {
+                row1: [
+                    {
+                        icon: '🧑‍🏫',
+                        title: '기자 재훈련',
+                        body: '• 20년 습관 바꾸기<br>• 주 1회 실습 워크숍<br>• 성공 사례 공유'
+                    },
+                    {
+                        icon: '📝',
+                        title: '기존 기사 개선',
+                        body: '• 연 1만건 중 핵심 100개<br>• 전담팀 3-5명 필요<br>• 3개월 집중 프로젝트'
+                    }
+                ],
+                row2: [
+                    {
+                        icon: '🌏',
+                        title: '해외는 이미',
+                        body: 'NYT: <strong>2배</strong> 인용률 상승<br>FT: 전체 아카이브 AI 최적화'
+                    },
+                    {
+                        icon: '💡',
+                        title: '기대 효과',
+                        body: '• 새로운 독자층 진입<br>• 브랜드 신뢰도 상승<br>• 광고 수익 모델 전환'
+                    }
+                ]
+            }));
+            
+            // Slide 5
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('1+4', {
+                row1: {
+                    title: '오늘 점심부터 시작하는 4단계',
+                    subtitle: '거창하지 않아도 됩니다'
+                },
+                row2: [
+                    {
+                        icon: '🚀',
+                        title: '1개월: 실험',
+                        body: '인기 기사 10개<br>AI 원칙 재작성<br>ChatGPT 테스트'
+                    },
+                    {
+                        icon: '📚',
+                        title: '3개월: 교육',
+                        body: '부서별 워크숍<br>우수 사례 시상<br>가이드북 제작'
+                    },
+                    {
+                        icon: '⚙️',
+                        title: '6개월: 시스템',
+                        body: 'CMS 기능 추가<br>자동 검증 툴<br>AI 인용 추적'
+                    },
+                    {
+                        icon: '🎯',
+                        title: '1년: 정착',
+                        body: '전사 확산<br>KPI 반영<br>업계 선도'
+                    }
+                ]
+            }));
+            
+            // Slide 6
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('22', [
+                {
+                    title: '❌ AI가 무시하는 기사',
+                    body: '제목: "정부 정책 논란 확산"<br><br>본문: "이번 정책을 둘러싼 논란이 확산되고 있다. 이러한 배경에는..."'
+                },
+                {
+                    title: '✅ AI가 인용하는 기사',
+                    body: '제목: "정부, 내년 최저임금 9,860원 확정"<br><br>본문: "<strong>고용노동부는 2025년 최저임금을 시간당 9,860원으로 확정했다.</strong> 이는 전년 대비 1.7% 인상된 금액이다."'
+                }
+            ]));
+            
+            // Slide 7
+            slidesContainer.insertAdjacentHTML('beforeend', templateRenderer.renderSlide('11', {
+                title: '변화는 한 문장부터',
+                subtitle: '오늘의 선택이 내일의 언론을 만듭니다',
+                body: '<strong>"클릭보다 인용을, 조회수보다 신뢰를"</strong><br><br>지금 시작하는 작은 변화:<br>✓ 오늘 쓰는 기사 첫 문장 다시 보기<br>✓ "이렇게" "그래서" 지우기<br>✓ 독자 질문 먼저 생각하기<br><br><strong>함께 만들어갈 미래를 논의해요</strong>',
+                footer: 'AIEO 시대, 언론의 새로운 가능성'
+            }));
+            
+            initializeSlides();
+        });
+    </script>
+</body>
+</html>
